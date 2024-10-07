@@ -49,7 +49,7 @@ def get_enemywar():
     enemy_lineup = full_lineup['opponent']
     return enemy_lineup
 
-def get_cwlwar(mode):
+def get_cwlwar():
     response = requests.get(f'https://api.clashofclans.com/v1/clans/%23GQ29JVYY/currentwar/leaguegroup', headers=headers)
     data = response.json()
     war_tags = data['rounds']
@@ -62,14 +62,9 @@ def get_cwlwar(mode):
         lineup = requests.get(f'https://api.clashofclans.com/v1/clanwarleagues/wars/%23{war_tag}', headers=headers)
         lineup = lineup.json()
         if lineup['clan']['tag'] == "#GQ29JVYY":
-            if mode == 0:
-                return lineup['opponent']
-            return lineup['opponent']['tag']
+            return lineup['opponent'], lineup['opponent']['tag']
         elif lineup['opponent']['tag'] == "#GQ29JVYY":
-            if mode == 0:
-                return lineup['clan']
-            else:
-                return lineup['clan']['tag']
+            return lineup['clan'], lineup['clan']['tag']
     return
 
 def member_cleanup(clan_info):
@@ -157,6 +152,8 @@ def validtag(info):
     
 def load_player_json(tag):
     response = requests.get(f"https://api.clashofclans.com/v1/players/%23{tag}", headers=headers)
+    if response.status_code == 400:
+        return "fake"
     # i hate cleanup
     player_json = response.json()
     player_json.pop('defenseWins')

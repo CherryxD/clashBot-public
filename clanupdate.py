@@ -59,7 +59,6 @@ def blacklistadd(info):
     info = info.replace("#", "")
     clash.blacklist_save(info)
     tag = info.split(",")
-    print(tag)
     return tag[1]
 
 def blacklistremove(info):
@@ -182,11 +181,7 @@ def detailed_view(tag):
     player_info += "```"
     return player_info
 
-def create_scout(clantag, mode):
-    if mode == 0:
-        enemy_lineup = clash.get_enemywar()
-    elif mode == 1:
-        enemy_lineup = clash.get_cwlwar(0)
+def create_scout(enemy_lineup, clantag):
     lineup = []
     for enemy in enemy_lineup['members']:
         player = []
@@ -263,7 +258,7 @@ def create_scout(clantag, mode):
         "Champion Equipment": champion_equips,
     }
     with open("scout.json", "w") as outfile: 
-        json.dump(d, outfile)
+        json.dump(d, outfile, indent=4)
 
     df = pandas.read_json("scout.json")
     df.to_excel(f"scout_report_{clantag}.xlsx")
